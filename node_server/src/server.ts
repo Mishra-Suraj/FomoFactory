@@ -23,6 +23,7 @@ const coinSchema = new mongoose.Schema({
       cap: Number,
     },
   ],
+  createdAt: { type: Date, default: Date.now },
 });
 
 const coinExchangesSchema = new mongoose.Schema({
@@ -36,6 +37,7 @@ const coinExchangesSchema = new mongoose.Schema({
       volume: Number,
     },
   ],
+  createdAt: { type: Date, default: Date.now },
 });
 
 const CoinExchanges = mongoose.model("Exchanges", coinExchangesSchema);
@@ -130,7 +132,17 @@ function mapJsonToSchema(jsonData: any) {
   bitcoin.save();
 }
 
-app.get("/api/data", async (req: any, res: any) => {});
+// Express code starts here
+
+app.get("/api/data/coins", async (req: any, res: any) => {
+  let data = await Coin.findOne({}).sort({ createdAt: -1 });
+  res.json(data);
+});
+
+app.get("/api/data/exchanges", async (req: any, res: any) => {
+  let data = await CoinExchanges.findOne({}).sort({ createdAt: -1 });
+  res.json(data);
+});
 
 app.listen(3001, () => {
   console.log("Server running on port 3001");

@@ -29,8 +29,10 @@ const coinSchema = new mongoose.Schema({
             rate: Number,
             volume: Number,
             cap: Number,
-        },
+            // createdAt: { type: Date, default: Date.now },
+        }, // createdAt: { type: Date, default: Date.now },
     ],
+    createdAt: { type: Date, default: Date.now },
 });
 const coinExchangesSchema = new mongoose.Schema({
     data: [
@@ -41,6 +43,7 @@ const coinExchangesSchema = new mongoose.Schema({
             code: String,
             markets: Number,
             volume: Number,
+            createdAt: { type: Date, default: Date.now },
         },
     ],
 });
@@ -60,7 +63,7 @@ function CoinExchangesFetching() {
                     sort: "visitors",
                     order: "descending",
                     offset: 0,
-                    limit: 1,
+                    limit: 20,
                     meta: true,
                 }),
             });
@@ -130,7 +133,11 @@ function mapJsonToSchema(jsonData) {
     });
     bitcoin.save();
 }
-app.get("/api/data", (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
+app.get("/api/data/coins", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let data = yield Coin.findOne({}).sort({ createdAt: -1 });
+    res.json(data);
+}));
+app.get("/api/data/exchanges", (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
 app.listen(3001, () => {
     console.log("Server running on port 3001");
 });
